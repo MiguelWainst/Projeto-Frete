@@ -1,9 +1,9 @@
 package model.entities;
 
 
-import model.interfaces.ITransporte;
+import model.interfaces.ITaxaTransporte;
 
-public class TAereo extends Transporte implements ITransporte{
+public class TAereo extends Transporte implements ITaxaTransporte {
     private static final Double VALOR_DESPACHO = 100.00;
 
     @Override

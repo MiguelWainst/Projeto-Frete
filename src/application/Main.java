@@ -11,9 +11,6 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-
-        System.out.println("Testando como funciona a Branch (coisa nova pra mim)");
-
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
 
@@ -29,6 +26,9 @@ public class Main {
         ReciboService reciboService = new ReciboService();
 
         reciboService.mostrarOpcoes(taxaFreteService.calcularPrecoFrete(preco, peso, cargaTipo, imposto));
+
+        System.out.print("\nQual sua escolha: ");
+        int escolha = sc.nextInt();
 
         sc.close();
     }

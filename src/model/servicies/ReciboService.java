@@ -10,10 +10,14 @@ import java.util.List;
 
 public class ReciboService {
     public void mostrarOpcoes(List<ResultadoCalculo> resultado) {
+        int i=1;
         for(ResultadoCalculo x : resultado) {
-            System.out.println("Transporte: " + x.getTransporte() + " Preço | " + x.getPreco());
+            System.out.println("Transporte [" + i + "]: "
+                    + x.getTransporte()
+                    + " | Preço: "
+                    + x.getPreco());
+            i++;
         }
-
     }
 
     public void imprimirNaTela(TaxaFreteService taxaFreteService) {
