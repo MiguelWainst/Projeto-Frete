@@ -1,7 +1,6 @@
 package model.entities;
 
-public abstract class Carga {
-
+public abstract class Transporte {
     @Override
     public abstract String toString();
 }

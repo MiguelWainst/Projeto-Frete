@@ -3,6 +3,7 @@ package application;
 import model.entities.enums.CargaTipo;
 import model.interfaces.IImposto;
 import model.servicies.BrazilImpostoService;
+import model.servicies.ReciboService;
 import model.servicies.TaxaFreteService;
 
 import java.util.Locale;
@@ -23,8 +24,9 @@ public class Main {
 
         TaxaFreteService taxaFreteService = new TaxaFreteService();
         IImposto imposto = new BrazilImpostoService();
-        taxaFreteService.calcularPrecoFrete(preco, peso, cargaTipo, imposto);
-        taxaFreteService.readPrecosFinais();
+        ReciboService reciboService = new ReciboService();
+
+        reciboService.mostrarOpcoes(taxaFreteService.calcularPrecoFrete(preco, peso, cargaTipo, imposto));
 
         sc.close();
     }

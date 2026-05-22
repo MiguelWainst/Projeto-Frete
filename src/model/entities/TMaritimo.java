@@ -3,7 +3,7 @@ package model.entities;
 import model.interfaces.IImposto;
 import model.interfaces.ITransporte;
 
-public class TMaritimo implements ITransporte {
+public class TMaritimo extends Transporte implements ITransporte {
     private static final Double VALOR_DESPACHO = 50.00;
 
     @Override
@@ -17,5 +17,10 @@ public class TMaritimo implements ITransporte {
         } else {
             return peso * 6.0 + VALOR_DESPACHO;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Frete Marítimo";
     }
 }

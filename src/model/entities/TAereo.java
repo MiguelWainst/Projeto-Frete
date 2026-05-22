@@ -3,7 +3,7 @@ package model.entities;
 
 import model.interfaces.ITransporte;
 
-public class TAereo extends Carga implements ITransporte{
+public class TAereo extends Transporte implements ITransporte{
     private static final Double VALOR_DESPACHO = 100.00;
 
     @Override
