@@ -27,7 +27,7 @@ public class ReciboService {
         System.out.printf("Preço da mercadoria da mercadoria R$          %.2f%n", x.getPreco());
         System.out.printf("     + Imposto R$                             %.2f%n", x.getImposto());
         System.out.println("Tipo do transporte:                           " + x.getTransporte());
-        System.out.printf("     + Taxa taxa de frete R$                  %.2f%n", x.getTaxa());
+        System.out.printf("     + Taxa de frete R$                       %.2f%n", x.getTaxa());
         System.out.println("     + Tipo da carga:                         " + x.getTipoDeCarga());
         System.out.printf("           + Adicional de tipo de carga R$    %.2f%n", x.getAdicionalCarga());
         System.out.println("Endereço de entrega:                          " + x.getEndereco());
