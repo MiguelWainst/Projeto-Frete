@@ -1,11 +1,14 @@
 package application;
 
+import model.entities.ResultadoCalculo;
 import model.entities.enums.CargaTipo;
 import model.interfaces.IImposto;
 import model.servicies.BrazilImpostoService;
 import model.servicies.ReciboService;
 import model.servicies.TaxaFreteService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -24,16 +27,17 @@ public class Main {
         System.out.print("Informe o tipo da mercadoria (inflamavel, fragil ou comum): ");
         CargaTipo cargaTipo = CargaTipo.valueOf(sc.next().toUpperCase());
 
-        TaxaFreteService taxaFreteService = new TaxaFreteService();
-        IImposto imposto = new BrazilImpostoService();
+        List<ResultadoCalculo> resultCalc = new ArrayList<>(); // Criando lista para passar de arg.
         ReciboService reciboService = new ReciboService();
 
-        reciboService.mostrarOpcoes(taxaFreteService.calcularPrecoFrete(preco, peso, cargaTipo, imposto, endereco));
+        // Chamando o serviço TaxaFrete para calcular tudo e colocar dentro da lista criada acima.
+        new TaxaFreteService().calcularPrecoFrete(preco, peso, cargaTipo, new BrazilImpostoService(), endereco, resultCalc);
+        reciboService.mostrarOpcoes(resultCalc); // Chamando o recibo service para printar as opções de compra.
 
-        System.out.print("\nQual sua escolha: ");
+        System.out.print("\nQual sua escolha: "); // Pede qual escolha será feita.
         int escolha = sc.nextInt();
 
-        reciboService.imprimirNaTela(taxaFreteService.calcularPrecoFrete(preco, peso, cargaTipo, imposto, endereco), escolha);
+        reciboService.imprimirNaTela(resultCalc, escolha); // Baseado na escolha, o ReciboService mostra o cupom fiscal.
 
         sc.close();
     }

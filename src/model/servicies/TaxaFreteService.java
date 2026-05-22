@@ -17,18 +17,17 @@ public class TaxaFreteService {
     private static final Double ADICIONAL_FRAGIL     = 50.00;
     private static final Double ADICIONAL_COMUM      = 0.00;
 
-    private final List<Double> precosFinais = new ArrayList<>();
+    public void calcularPrecoFrete(Double preco, Double peso, CargaTipo cargaTipo, IImposto imposto, String endereco,
+                                   List<ResultadoCalculo> resultado) {
 
-    public List<ResultadoCalculo> calcularPrecoFrete(Double preco, Double peso, CargaTipo cargaTipo, IImposto imposto, String endereco) {
         // Esta é uma lista de interfaces e tudo o que estende ela.
         List<? extends ITaxaTransporte> list = Arrays.asList(new TAereo(), new TMaritimo(), new TTerrestre());
-        List<Double> precoComTaxa = new ArrayList<>();
-        List<ResultadoCalculo> resultado = new ArrayList<>();
+        List<Double> precoComTaxa = new ArrayList<>(); // Lista feita para guardar os preços com taxa.
 
         int i=0; // Índicie responsável por controlar a lista.
         for (ITaxaTransporte taxaTransporte:list) {
 
-            /* Adiciona a taxa de frete de acordo com a regra de negócio
+            /* Adiciona a taxa de frete conforme a regra de negócio
             da classe que implementa a interface ITaxaTransporte. */
             Double taxa = taxaTransporte.TaxaFrete(peso);
             precoComTaxa.add(taxa + preco); // Adiciona à lista o preço com a taxa.
@@ -56,13 +55,11 @@ public class TaxaFreteService {
 
             // Adiciona à lista "resultado" uma nova instância de ResultadoCalculo.
             /* Essa ".add" é responsável por passar um objeto do tipo ResultadoCalculo
-            para a classe ResultadoCalculo. Esta mesma classe lida com os dados
-            necessários para o print final do recibo na tela do usuário. */
+            para a lista ResultadoCalculo. */
             resultado.add(new ResultadoCalculo(list.get(i).toString(), preco, precoTotal, taxa,
                     impostoPreco, cargaTipo.toString(), "1 Dia", endereco, adicionalCarga));
 
             i++; // Incrementa para calcular o próximo item.
         }
-        return resultado; // Função toda retorna uma lista do Tipo "ResultadoCalculo".
     }
 }
