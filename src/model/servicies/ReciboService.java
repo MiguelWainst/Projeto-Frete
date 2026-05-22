@@ -5,6 +5,11 @@ import model.entities.ResultadoCalculo;
 import java.util.List;
 
 public class ReciboService {
+    /*
+    Esta classe serviço é responsável pelo trabalho de impressão
+    de informação para o cliente e também de salvar um arquivo
+    de cupom fiscal no computador.
+     */
     public void mostrarOpcoes(List<ResultadoCalculo> resultado) {
         int i=1;
         for(ResultadoCalculo x : resultado) {
@@ -17,9 +22,8 @@ public class ReciboService {
     }
 
     public void imprimirNaTela(List<ResultadoCalculo> resultado, int escolha) {
-        System.out.println("   ============== RECIBO ==============");
         ResultadoCalculo x = resultado.get(escolha - 1);
-
+        System.out.println("   ============== RECIBO ==============");
         System.out.printf("Preço da mercadoria da mercadoria R$          %.2f%n", x.getPreco());
         System.out.printf("     + Imposto R$                             %.2f%n", x.getImposto());
         System.out.println("Tipo do transporte:                           " + x.getTransporte());

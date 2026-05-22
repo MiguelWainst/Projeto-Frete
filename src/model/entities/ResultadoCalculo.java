@@ -3,6 +3,12 @@ package model.entities;
 import java.time.Duration;
 
 public class ResultadoCalculo {
+
+    /*
+    Esta classe é responsável por guardar um objeto carregando
+    as informações necessárias para um print do recibo.
+     */
+
     private String transporte;
     private Double preco;
     private Double precoTotal;
