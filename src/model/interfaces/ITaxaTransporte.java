@@ -1,5 +1,5 @@
 package model.interfaces;
 
-public interface ITransporte {
+public interface ITaxaTransporte {
     Double TaxaFrete(Double peso);
 }

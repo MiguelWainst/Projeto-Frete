@@ -1,8 +1,14 @@
 package model.entities;
 
+import java.time.Duration;
+
 public class ResultadoCalculo {
     private String transporte;
     private Double preco;
+    private Double taxa;
+    private Double imposto;
+    private String tipoDeCarga;
+    private Duration duracao;
 
     public ResultadoCalculo(String transporte, Double preco) {
         this.transporte = transporte;
