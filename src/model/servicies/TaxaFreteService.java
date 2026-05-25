@@ -26,12 +26,11 @@ public class TaxaFreteService {
             // Laço que adiciona imposto e adicional de tipo de carga ao preço final.
             Double precoTotal = 0.0; // Guarda o preço final a ser pago.
             Double impostoPreco = imposto.regraImposto(preco); // Guarda apenas o valor do imposto.
-            Double adicionalCarga = 0.0; // Guarda o valor de adicional de carga.
 
             /* Lógica atualizada */
             /* Agora a lógica de acionar o valor adicional de carga
             está diretamente implementada no próprio enum. */
-            adicionalCarga = cargaTipo.getAdicional(); // O valor vem do enum.
+            Double adicionalCarga = cargaTipo.getAdicional();// Guarda o valor de adicional de carga. // O valor vem do enum.
 
             // Soma o preço com taxa, imposto e valor adicional de tipo de carga ao preço total.
             precoTotal += precoComTaxa + impostoPreco + adicionalCarga;
