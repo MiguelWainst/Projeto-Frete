@@ -1,8 +1,12 @@
 package application;
 
 import model.entities.ResultadoCalculo;
+import model.entities.TAereo;
+import model.entities.TMaritimo;
+import model.entities.TTerrestre;
 import model.entities.enums.CargaTipo;
 import model.interfaces.IImposto;
+import model.interfaces.ITaxaTransporte;
 import model.servicies.BrazilImpostoService;
 import model.servicies.ReciboService;
 import model.servicies.TaxaFreteService;
@@ -67,8 +71,12 @@ public class Main {
         List<ResultadoCalculo> resultCalc = new ArrayList<>(); // Criando lista para passar de arg.
         ReciboService reciboService = new ReciboService();
 
+        // Lista de interfaces e tudo o que estende ela.
+        List<? extends ITaxaTransporte> listaTaxaTransporte = Arrays.asList(new TAereo(), new TMaritimo(), new TTerrestre());
+
         // Chamando o serviço TaxaFrete para calcular tudo e colocar dentro da lista criada acima.
-        new TaxaFreteService().calcularPrecoFrete(preco, peso, cargaTipo, new BrazilImpostoService(), endereco, resultCalc);
+        new TaxaFreteService().calcularPrecoFrete(preco, peso, cargaTipo, new BrazilImpostoService(),
+                endereco, resultCalc, listaTaxaTransporte);
         reciboService.mostrarOpcoes(resultCalc); // Chamando o recibo service para printar as opções de compra.
 
         int escolha = 0;
