@@ -31,7 +31,7 @@ public class TaxaFreteService {
             /* Lógica atualizada */
             /* Agora a lógica de acionar o valor adicional de carga
             está diretamente implementada no próprio enum. */
-            adicionalCarga = cargaTipo.getAdicional(); // O valor vem do enum.
+            adicionalCarga = cargaTipo.getAdicional();// Guarda o valor de adicional de carga. // O valor vem do enum.
 
             // Soma o preço com taxa, imposto e valor adicional de tipo de carga ao preço total.
             precoTotal += precoComTaxa + impostoPreco + adicionalCarga;
