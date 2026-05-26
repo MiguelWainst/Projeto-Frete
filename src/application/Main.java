@@ -94,9 +94,33 @@ public class Main {
             } catch (IllegalArgumentException e) {
                 System.out.println("ERRO: Escolha um número dentro do disponível.\n...");
                 sc.nextLine();
+            } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
             }
         }
-        reciboService.imprimirNaTela(resultCalc, escolha); // Baseado na escolha, o ReciboService mostra o cupom fiscal.
+        // Baseado na escolha, o ReciboService manda uma String com o cupom.
+        String reciboFinal = reciboService.gerarRecibo(resultCalc, escolha);
+        System.out.println(reciboFinal); // Imprimie o recibo/cupom fiscal final.
+
+        /* Lógica para imprimir o cupom fiscal —criar um arquivo .txt na pasta
+        temp—. Depende da resposta do usuário. */
+        char resp = 'n';
+        while (true) {
+            try {
+                System.out.println("Deseja gerar o cupom fiscal na pasta 'temp'? (s/n)");
+                resp = sc.next().charAt(0);
+                if (resp != 's' && resp != 'n')
+                    throw new IllegalArgumentException();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("ERRO: Input é inválido.\n...");
+            } catch (IllegalArgumentException e) {
+                System.out.println("ERRO: Reposta deve ser s/n (sim/não)\n...");
+            }
+        }
+        if (resp == 's')
+            // Chama a função responsável por criar o .txt com o cupom fiscal
+            reciboService.gerarCupomFiscal(reciboFinal);
 
         sc.close();
     }
