@@ -2,6 +2,9 @@ package model.servicies;
 
 import model.entities.ResultadoCalculo;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 public class ReciboService {
@@ -21,17 +24,34 @@ public class ReciboService {
         }
     }
 
-    public void imprimirNaTela(List<ResultadoCalculo> resultado, int escolha) {
+    public String gerarRecibo(List<ResultadoCalculo> resultado, int escolha) {
         ResultadoCalculo x = resultado.get(escolha - 1);
-        System.out.println("   ============== RECIBO ==============");
-        System.out.printf("Preço da mercadoria da mercadoria R$          %.2f%n", x.getPreco());
-        System.out.printf("     + Imposto R$                             %.2f%n", x.getImposto());
-        System.out.println("Tipo do transporte:                           " + x.getTransporte());
-        System.out.printf("     + Taxa de frete R$                       %.2f%n", x.getTaxa());
-        System.out.println("     + Tipo da carga:                         " + x.getTipoDeCarga());
-        System.out.printf("           + Adicional de tipo de carga R$    %.2f%n", x.getAdicionalCarga());
-        System.out.println("Endereço de entrega:                          " + x.getEndereco());
-        System.out.println("Duração:                                      " + x.getDuracao());
-        System.out.printf("PREÇO TOTAL A PAGAR: R$:%.2f%n", x.getPrecoTotal());
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("   ============== RECIBO ==============\n");
+        sb.append(String.format("Preço da mercadoria R$               %.2f%n", x.getPreco()));
+        sb.append(String.format("     + Imposto R$                    %.2f%n", x.getImposto()));
+        sb.append("Tipo do transporte:                  ").append(x.getTransporte()).append("\n");
+        sb.append(String.format("     + Taxa de frete R$              %.2f%n", x.getTaxa()));
+        sb.append("     + Tipo da carga:                ").append(x.getTipoDeCarga()).append("\n");
+        sb.append(String.format("           + Adicional de carga R$   %.2f%n", x.getAdicionalCarga()));
+        sb.append("Endereço de entrega:                 ").append(x.getEndereco()).append("\n");
+        sb.append("Duração:                             ").append(x.getDuracao()).append("\n");
+        sb.append("---------------------------------------\n");
+        sb.append(String.format("PREÇO TOTAL A PAGAR: R$              %.2f%n", x.getPrecoTotal()));
+
+        return sb.toString();
+    }
+
+    public void gerarCupomFiscal(String cupom) {
+        String path = "c:\\temp\\CupomFiscal.txt"; // Caminho que vai ser criado o arquivo
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
+            bw.write("CupomFiscal:\n\n");
+            bw.write(cupom); // Escreve a String fornecida.
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("ERRO: Não foi possível abrir o arquivo.");
+        }
     }
 }
