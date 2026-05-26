@@ -5,7 +5,6 @@ import model.entities.TAereo;
 import model.entities.TMaritimo;
 import model.entities.TTerrestre;
 import model.entities.enums.CargaTipo;
-import model.interfaces.IImposto;
 import model.interfaces.ITaxaTransporte;
 import model.servicies.BrazilImpostoService;
 import model.servicies.ReciboService;
@@ -18,7 +17,7 @@ public class Main {
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
 
-        Double preco = 0.0;
+        Double preco;
         while(true) {
             try {
                 System.out.print("Informe o preço da mercadoria R$: ");
@@ -35,7 +34,7 @@ public class Main {
             }
         }
 
-        Double peso = 0.0;
+        Double peso;
         while (true) {
             try {
                 System.out.print("Informe o peso da mercadoria (KG): ");
@@ -56,7 +55,7 @@ public class Main {
         System.out.print("Informe o endereço de entrega (Rua, Número, Cep): ");
         String endereco = sc.nextLine();
 
-        CargaTipo cargaTipo = null;
+        CargaTipo cargaTipo;
         while (true) {
             try {
                 System.out.print("Informe o tipo da mercadoria (inflamavel, fragil ou comum): ");
@@ -79,7 +78,7 @@ public class Main {
                 endereco, resultCalc, listaTaxaTransporte);
         reciboService.mostrarOpcoes(resultCalc); // Chamando o recibo service para printar as opções de compra.
 
-        int escolha = 0;
+        int escolha;
         while (true) {
             try {
                 System.out.print("\nQual sua escolha: "); // Pede qual escolha será feita.
@@ -104,7 +103,7 @@ public class Main {
 
         /* Lógica para imprimir o cupom fiscal —criar um arquivo .txt na pasta
         temp—. Depende da resposta do usuário. */
-        char resp = 'n';
+        char resp;
         while (true) {
             try {
                 System.out.println("Deseja gerar o cupom fiscal na pasta 'temp'? (s/n)");

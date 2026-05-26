@@ -5,9 +5,6 @@ import model.entities.enums.CargaTipo;
 import model.interfaces.IImposto;
 import model.interfaces.ITaxaTransporte;
 
-import javax.xml.datatype.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TaxaFreteService {
@@ -15,7 +12,6 @@ public class TaxaFreteService {
     public void calcularPrecoFrete(Double preco, Double peso, CargaTipo cargaTipo, IImposto imposto, String endereco,
                                    List<ResultadoCalculo> resultado, List<? extends ITaxaTransporte> list) {
 
-        int i=0; // Índicie responsável por controlar a lista.
         for (ITaxaTransporte taxaTransporte:list) {
 
             /* Adiciona a taxa de frete conforme a regra de negócio
@@ -40,8 +36,6 @@ public class TaxaFreteService {
             para a lista ResultadoCalculo. */
             resultado.add(new ResultadoCalculo(taxaTransporte.toString(), preco, precoTotal, taxa,
                     impostoPreco, cargaTipo.toString(), "1 Dia", endereco, adicionalCarga));
-
-            i++; // Incrementa para calcular o próximo item.
         }
     }
 }
