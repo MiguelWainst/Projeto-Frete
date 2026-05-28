@@ -1,6 +1,5 @@
-package model;
+package model.entities;
 
-import model.entities.Dimensao;
 import model.entities.enums.CargaTipo;
 import model.entities.enums.Rota;
 

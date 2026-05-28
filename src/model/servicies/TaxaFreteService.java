@@ -1,9 +1,10 @@
 package model.servicies;
 
-import model.Carga;
+import model.entities.Carga;
 import model.entities.*;
 import model.entities.enums.TransporteTipo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * e Advalorem para consolidar o custo logístico de cada modal de transporte.
  *
  * @author Miguel Wainstein
- * @version 1.1
+ * @version 1.2
  * @since 28/05/2026
  */
 public class TaxaFreteService {
@@ -21,10 +22,11 @@ public class TaxaFreteService {
     private final AdvaloremService advaloremService;
 
     /**
-     * Construtor que inicializa as dependências necessárias para o cálculo.
-     * @param fretePesoService Serviço para cálculo do frete baseado no peso/rota.
-     * @param pesoVolumetricoService Serviço para definição do peso taxável (real e cubado).
-     * @param advaloremService Serviço para cálculo do seguro da carga.
+     * O construtor recebe as ferramentas (serviços) necessárias.
+     * Isso garante que a classe sempre tenha o que precisa para calcular.
+     * @param fretePesoService Serviço para o cálculo do frete baseado em peso e rota.
+     * @param pesoVolumetricoService Serviço que define se usamos o peso real ou o tamanho da caixa (cubagem).
+     * @param advaloremService Serviço que calcula o valor do seguro da mercadoria.
      */
     public TaxaFreteService(FPService fretePesoService, PVService pesoVolumetricoService, AdvaloremService advaloremService) {
         this.fretePesoService = fretePesoService;
@@ -33,17 +35,16 @@ public class TaxaFreteService {
     }
 
     /**
-     * Realiza o processamento em lote de todos os modais de transporte informados.
-     * <p>
-     * O metodh percorre a lista de modais, executa a cadeia de cálculos e popula
-     * a lista de resultados com objetos {@link ResultadoCalculo} formatados.
-     *
-     * @param cargaInfo Objeto contendo os dados brutos da mercadoria e rota.
-     * @param transporteTipos Lista de modais (Aéreo, Marítimo, etc.) a serem avaliados.
-     * @param resultadoCalculo Lista de destino onde os resultados finais serão armazenados.
+     * Realiza o cálculo de todos os tipos de transporte e devolve uma lista com os resultados.
+     * @param cargaInfo Objeto com os dados da mercadoria (peso, preço, dimensões, etc.).
+     * @param transporteTipos Lista de transportes que queremos calcular (Aéreo, Terrestre, etc.).
+     * @return Uma lista de objetos {@link ResultadoCalculo} contendo os orçamentos prontos.
      */
-    public void calcularPrecoFrete(Carga cargaInfo, List<TransporteTipo> transporteTipos, List<ResultadoCalculo> resultadoCalculo) {
+    public List<ResultadoCalculo> calcularPrecoFrete(Carga cargaInfo, List<TransporteTipo> transporteTipos) {
+        // Cria uma lista interna para guardar os cálculos que vamos fazer agora.
+        List<ResultadoCalculo> resultadoCalculo = new ArrayList<>();
 
+        // Para cada tipo de transporte na lista, fazemos a sequência de cálculos.
         for (TransporteTipo transporteTipo : transporteTipos) {
             // Calcula o peso que será efetivamente cobrado (Peso Volumétrico).
             Double pesoTaxavel = pesoVolumetricoService.calcularPesoTaxavel(cargaInfo.getPeso(), cargaInfo.getDimensao(), transporteTipo);
@@ -65,5 +66,7 @@ public class TaxaFreteService {
                     advalorem,
                     cargaInfo.getEndereco()));
         }
+        // Devolvemos a lista completa para quem chamou o métodh.
+        return resultadoCalculo;
     }
 }

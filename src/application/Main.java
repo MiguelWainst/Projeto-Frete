@@ -1,6 +1,6 @@
 package application;
 
-import model.Carga;
+import model.entities.Carga;
 import model.entities.Dimensao;
 import model.entities.ResultadoCalculo;
 import model.entities.enums.CargaTipo;
@@ -16,7 +16,8 @@ public class Main {
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
 
-        /* Entrada de dados =======================================================*/
+        /* ==Entrada de dados ==*/
+        // Coleta informações básicas da carga usando métodos que já tratam erros de digitação.
         Double preco = ConsoleUI.lerDouble(sc, "Informe o preço da mercadoria R$: ",
                 "ERRO: O preço deve estar entre %.2f e %.2f.\n...%n", 0, 1000000000);
 
@@ -26,6 +27,7 @@ public class Main {
         System.out.print("Informe o endereço de entrega (Rua, Número, Cep): ");
         String endereco = sc.nextLine();
 
+        // Seleciona categorias pré definidas (Enums) para evitar erros de texto.
         CargaTipo cargaTipo = ConsoleUI.lerEnum(sc, CargaTipo.class,
                 "Informe o tipo da mercadoria (Inflamavel, Fragil, Visado ou Comum): ",
                 "ERRO: Tipo de mercadoria não existe.\n...");
@@ -44,18 +46,16 @@ public class Main {
 
         Rota rota = ConsoleUI.lerEnum(sc, Rota.class, "Informe a rota (SC_SP|SC_RS|SC_AM): ",
                 "ERRO: Essa rota não existe.\n...");
-        /* Fim da entrada de dados =============================================================================*/
+        /* ==Fim da entrada de dados== */
 
         // Classe carga guardando todas as informações do que tange a carga.
         Carga carga = new Carga(preco, peso, endereco, cargaTipo, new Dimensao(comp, larg, alt), rota);
-
-        List<ResultadoCalculo> resultCalc = new ArrayList<>(); // Cria uma lista para armazenar as informações.
 
         // Criando uma lista de Enum que contenha os tipos de transporte.
         List<TransporteTipo> transporteTipos = Arrays.asList(TransporteTipo.AEREO, TransporteTipo.TERRESTRE, TransporteTipo.MARITIMO);
 
         // Passando para o TaxaFrete as informações necessárias para gerar o preço total do frete.
-        new TaxaFreteService(new FPService(), new PVService(), new AdvaloremService()).calcularPrecoFrete(carga, transporteTipos, resultCalc);
+        List<ResultadoCalculo> resultCalc = new TaxaFreteService(new FPService(), new PVService(), new AdvaloremService()).calcularPrecoFrete(carga, transporteTipos);
 
         // Criando lista para passar de arg.
         ReciboService reciboService = new ReciboService();
