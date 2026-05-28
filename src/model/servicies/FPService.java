@@ -9,6 +9,7 @@ import model.entities.enums.TransporteTipo;
  * O preço por KG depende da rota e do tipo de transporte. Essas
  * informações são fornecidas por {@link TransporteTipo} (tipo do
  * transporte) e {@link Rota} (rota percorrida).
+ *
  * @author Miguel Wainstein
  * @version 1.0
  * @since 28/05/2026
@@ -22,7 +23,7 @@ public class FPService {
      * @param transporteTipo Tipo do transporte da vez.
      * @return O maior entre o FP (Frete Peso) calculado e o preço mínimo.
      */
-    public Double fPCalculo(Double PV, Rota rota, TransporteTipo transporteTipo) {
+    public Double calcularFretePeso(Double PV, Rota rota, TransporteTipo transporteTipo) {
         Double FP = PV * transporteTipo.extrairPrecoKg(rota);
         return Math.max(FP, transporteTipo.extrairMinimo(rota));
     }

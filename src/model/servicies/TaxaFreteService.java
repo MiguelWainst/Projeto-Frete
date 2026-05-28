@@ -2,43 +2,68 @@ package model.servicies;
 
 import model.Carga;
 import model.entities.*;
-import model.entities.enums.CargaTipo;
-import model.entities.enums.Rota;
 import model.entities.enums.TransporteTipo;
 
 import java.util.List;
 
+/**
+ * Esta classe é o organizador do sistema de fretes.
+ * Ela coordena a execução dos serviços de Peso Volumétrico, Frete Peso
+ * e Advalorem para consolidar o custo logístico de cada modal de transporte.
+ *
+ * @author Miguel Wainstein
+ * @version 1.1
+ * @since 28/05/2026
+ */
 public class TaxaFreteService {
+    private final FPService fretePesoService;
+    private final PVService pesoVolumetricoService;
+    private final AdvaloremService advaloremService;
 
     /**
-     *
-     * Esta função é a responsável por dar o veredito final do preço. Ela junta todos os
-     * serviços que tratam do valor do frete, usa e ordena eles de forma organizada e
-     * depois adiciona todos os resultados numa lista "ResultadoCalculo" para salvar os
-     * resultados e tratar eles do jeito que precisar.
-     *
-     * @param cargaInfo - Classe contendo todas os dados da carga.
-     * @param FP - O Frete Peso é o valor dado em cima do Peso Volumétrico.
-     * @param adv - Instanciação do Advalorem.
-     * @param PV - Instanciação do Peso Volumétrico
-     * @param transporteTipos - A Lista de tipo de transporte serve para poder calcular
-     *                        todos os tipos de transportes antes de pedir para o cliente
-     *                        que tipo de transporte ele quer utilizar. É mais fácil
-     *                        escolher quando se sabe o preço de cada um.
-     * @param resultadoCalculo - Essa lista serve exclusivamente para guardar o resultado
-     *                         dos cálculos de cada tipo da lista "TransporteTipo".
+     * Construtor que inicializa as dependências necessárias para o cálculo.
+     * @param fretePesoService Serviço para cálculo do frete baseado no peso/rota.
+     * @param pesoVolumetricoService Serviço para definição do peso taxável (real e cubado).
+     * @param advaloremService Serviço para cálculo do seguro da carga.
      */
-    public void calcularPrecoFrete(Carga cargaInfo,
-                                   FPService FP, AdvaloremService adv, PVService PV,
-                                   List<TransporteTipo> transporteTipos, List<ResultadoCalculo> resultadoCalculo) {
+    public TaxaFreteService(FPService fretePesoService, PVService pesoVolumetricoService, AdvaloremService advaloremService) {
+        this.fretePesoService = fretePesoService;
+        this.pesoVolumetricoService = pesoVolumetricoService;
+        this.advaloremService = advaloremService;
+    }
+
+    /**
+     * Realiza o processamento em lote de todos os modais de transporte informados.
+     * <p>
+     * O metodh percorre a lista de modais, executa a cadeia de cálculos e popula
+     * a lista de resultados com objetos {@link ResultadoCalculo} formatados.
+     *
+     * @param cargaInfo Objeto contendo os dados brutos da mercadoria e rota.
+     * @param transporteTipos Lista de modais (Aéreo, Marítimo, etc.) a serem avaliados.
+     * @param resultadoCalculo Lista de destino onde os resultados finais serão armazenados.
+     */
+    public void calcularPrecoFrete(Carga cargaInfo, List<TransporteTipo> transporteTipos, List<ResultadoCalculo> resultadoCalculo) {
 
         for (TransporteTipo transporteTipo : transporteTipos) {
-            Double pesoVolumetrico = PV.calcularPesoTaxavel(cargaInfo.getPeso(), cargaInfo.getDimensao(), transporteTipo);
-            Double fretePeso = FP.fPCalculo(pesoVolumetrico, cargaInfo.getRota(), transporteTipo);
-            Double advalorem = adv.calcAdvalorem(cargaInfo.getPreco(), cargaInfo.getCargaTipo());
-            Double precoTotal = fretePeso + advalorem;
-            resultadoCalculo.add(new ResultadoCalculo(transporteTipo.getTransporteNome(), cargaInfo.getPreco(), fretePeso, precoTotal, cargaInfo.getCargaTipo().name(), advalorem, cargaInfo.getEndereco()));
-        }
+            // Calcula o peso que será efetivamente cobrado (Peso Volumétrico).
+            Double pesoTaxavel = pesoVolumetricoService.calcularPesoTaxavel(cargaInfo.getPeso(), cargaInfo.getDimensao(), transporteTipo);
 
+            // Calcula o frete peso com base no peso taxável.
+            Double fretePeso = fretePesoService.calcularFretePeso(pesoTaxavel, cargaInfo.getRota(), transporteTipo);
+
+            // Calcula o seguro (Advalorem) sobre o valor da mercadoria.
+            Double advalorem = advaloremService.calcAdvalorem(cargaInfo.getPreco(), cargaInfo.getCargaTipo(), transporteTipo);
+
+            Double precoTotal = fretePeso + advalorem;
+
+            // Consolida os dados no objeto de transferência de resultado.
+            resultadoCalculo.add(new ResultadoCalculo(transporteTipo.getTransporteNome(),
+                    cargaInfo.getPreco(),
+                    fretePeso,
+                    precoTotal,
+                    cargaInfo.getCargaTipo().name(),
+                    advalorem,
+                    cargaInfo.getEndereco()));
+        }
     }
 }

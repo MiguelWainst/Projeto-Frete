@@ -9,6 +9,7 @@ import model.entities.enums.TransporteTipo;
  * Pela regra de negócio, o peso que retorna da classe é sempre o maior
  * peso, ou seja, se o maior peso continuar a ser o original, então a
  * classe retorna o original.
+ *
  * @author Miguel Wainstein
  * @version 1.0
  * @since 28/05/2026

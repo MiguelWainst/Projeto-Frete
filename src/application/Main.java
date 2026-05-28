@@ -27,11 +27,11 @@ public class Main {
         String endereco = sc.nextLine();
 
         CargaTipo cargaTipo = ConsoleUI.lerEnum(sc, CargaTipo.class,
-                "Informe o tipo da mercadoria (Inflamavel, Fragil ou Comum): ",
+                "Informe o tipo da mercadoria (Inflamavel, Fragil, Visado ou Comum): ",
                 "ERRO: Tipo de mercadoria não existe.\n...");
 
         System.out.println("---------------------------------------");
-        System.out.println("Informe as dimensões da mercadoria: ");
+        System.out.println("Informe as dimensões da mercadoria (Metros): ");
 
         Double comp = ConsoleUI.lerDouble(sc, "Comprimento: ",
                 "ERRO: Medida não pode ser menor que 0 ou maior que 5 metros.\n...", 0.01, 8),
@@ -54,13 +54,8 @@ public class Main {
         // Criando uma lista de Enum que contenha os tipos de transporte.
         List<TransporteTipo> transporteTipos = Arrays.asList(TransporteTipo.AEREO, TransporteTipo.TERRESTRE, TransporteTipo.MARITIMO);
 
-        PVService PV = new PVService(); // Instanciando um PreçoVolumetrico pra passar para o serviço.
-        FPService FP = new FPService(); // Instanciando um FretePeso pra passar para o serviço.
-        AdvaloremService advalorem = new AdvaloremService(); // Instanciando um Advalorem pra passar para o serviço.
-
         // Passando para o TaxaFrete as informações necessárias para gerar o preço total do frete.
-        new TaxaFreteService().calcularPrecoFrete(preco, peso, endereco, cargaTipo, comp, larg, alt, FP,
-                advalorem, PV, transporteTipos, resultCalc, rota);
+        new TaxaFreteService(new FPService(), new PVService(), new AdvaloremService()).calcularPrecoFrete(carga, transporteTipos, resultCalc);
 
         // Criando lista para passar de arg.
         ReciboService reciboService = new ReciboService();

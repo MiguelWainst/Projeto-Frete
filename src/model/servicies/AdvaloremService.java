@@ -10,6 +10,7 @@ import model.entities.enums.TransporteTipo;
  * Cada modal tem a sua porcentagem em cima de cada tipo de carga.
  * O {@link TransporteTipo} serve para saber o transporte. Cada porcentagem
  * de tipo de carga muda conforme o transporte.
+ *
  * @author Miguel Wainstein
  * @version 1.0
  * @since 28/05/2026
