@@ -14,7 +14,7 @@ public class Main {
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
 
-        // Entrada de dados
+        /* Entrada de dados =======================================================*/
         Double preco = ConsoleUI.lerDouble(sc, "Informe o preço da mercadoria R$: ",
                 "ERRO: O preço deve estar entre %.2f e %.2f.\n...%n", 0, 1000000000);
 
@@ -42,60 +42,37 @@ public class Main {
 
         Rota rota = ConsoleUI.lerEnum(sc, Rota.class, "Informe a rota (SC_SP|SC_RS|SC_AM): ",
                 "ERRO: Essa rota não existe.\n...");
-        // Fim da entrada de dados.
+        /* Fim da entrada de dados =============================================================================*/
 
-        List<ResultadoCalculo> resultCalc = new ArrayList<>();
+        List<ResultadoCalculo> resultCalc = new ArrayList<>(); // Cria uma lista para armazenar as informações.
+
+        // Criando uma lista de Enum que contenha os tipos de transporte.
         List<TransporteTipo> transporteTipos = Arrays.asList(TransporteTipo.AEREO, TransporteTipo.TERRESTRE, TransporteTipo.MARITIMO);
 
-        PVService PV = new PVService();
-        FPService FP = new FPService();
-        AdvaloremService advalorem = new AdvaloremService();
+        PVService PV = new PVService(); // Instanciando um PreçoVolumetrico pra passar para o serviço.
+        FPService FP = new FPService(); // Instanciando um FretePeso pra passar para o serviço.
+        AdvaloremService advalorem = new AdvaloremService(); // Instanciando um Advalorem pra passar para o serviço.
 
-        new TaxaFreteService().calcularPrecoFrete(preco, peso, endereco, cargaTipo, comp, larg, alt, FP, advalorem, PV, transporteTipos, resultCalc, rota);
+        // Passando para o TaxaFrete as informações necessárias para gerar o preço total do frete.
+        new TaxaFreteService().calcularPrecoFrete(preco, peso, endereco, cargaTipo, comp, larg, alt, FP,
+                advalorem, PV, transporteTipos, resultCalc, rota);
 
-         // Criando lista para passar de arg.
+        // Criando lista para passar de arg.
         ReciboService reciboService = new ReciboService();
         reciboService.mostrarOpcoes(resultCalc); // Chamando o recibo service para printar as opções de compra.
 
-        int escolha;
-        while (true) {
-            try {
-                System.out.print("\nQual sua escolha: "); // Pede qual escolha será feita.
-                escolha = sc.nextInt();
-                if (escolha <=0 || escolha > resultCalc.size()) {
-                    throw new IllegalArgumentException();
-                }
-                break;
-            } catch (InputMismatchException e) {
-                System.out.println("ERRO: Formato inválido\n...");
-                sc.nextLine();
-            } catch (IllegalArgumentException e) {
-                System.out.println("ERRO: Escolha um número dentro do disponível.\n...");
-                sc.nextLine();
-            } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
-            }
-        }
+        int escolha = (int) ConsoleUI.lerLista(sc, resultCalc, "\nQual sua escolha: ",
+                "ERRO: Escolha um número dentro do disponível.\n...");
+
         // Baseado na escolha, o ReciboService manda uma String com o cupom.
         String reciboFinal = reciboService.gerarRecibo(resultCalc, escolha);
         System.out.println(reciboFinal); // Imprimie o recibo/cupom fiscal final.
 
         /* Lógica para imprimir o cupom fiscal —criar um arquivo .txt na pasta
         temp—. Depende da resposta do usuário. */
-        char resp;
-        while (true) {
-            try {
-                System.out.println("Deseja gerar o cupom fiscal na pasta 'temp'? (s/n)");
-                resp = sc.next().charAt(0);
-                if (resp != 's' && resp != 'n')
-                    throw new IllegalArgumentException();
-                break;
-            } catch (InputMismatchException e) {
-                System.out.println("ERRO: Input é inválido.\n...");
-            } catch (IllegalArgumentException e) {
-                System.out.println("ERRO: Reposta deve ser s/n (sim/não)\n...");
-            }
-        }
+        char resp = ConsoleUI.lerChar(sc, "Deseja gerar o cupom fiscal na pasta 'temp'? (s/n)",
+                "ERRO: Reposta deve ser s/n (sim/não)\n...");
+
         if (resp == 's')
             // Chama a função responsável por criar o .txt com o cupom fiscal
             reciboService.gerarCupomFiscal(reciboFinal);
