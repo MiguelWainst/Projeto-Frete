@@ -66,7 +66,7 @@ public class TaxaFreteService {
                     advalorem,
                     cargaInfo.getEndereco()));
         }
-        // Devolvemos a lista completa para quem chamou o métodh.
+        // Devolvemos a lista completa para quem chamou o metodh.
         return resultadoCalculo;
     }
 }
