@@ -1,14 +1,11 @@
 package application;
 
 import model.entities.ResultadoCalculo;
-import model.entities.TAereo;
-import model.entities.TMaritimo;
-import model.entities.TTerrestre;
 import model.entities.enums.CargaTipo;
-import model.interfaces.ITaxaTransporte;
-import model.servicies.BrazilImpostoService;
-import model.servicies.ReciboService;
-import model.servicies.TaxaFreteService;
+import model.entities.enums.Rota;
+import model.entities.enums.TransporteTipo;
+import model.servicies.*;
+import util.ConsoleUI;
 
 import java.util.*;
 
@@ -17,65 +14,47 @@ public class Main {
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
 
-        Double preco;
-        while(true) {
-            try {
-                System.out.print("Informe o preço da mercadoria R$: ");
-                preco = sc.nextDouble();
-                if(preco < 0 || preco > 1000000000) {
-                    throw new IllegalArgumentException();
-                }
-                break;
-            } catch (InputMismatchException e) {
-                System.out.println("ERRO: Formato inválido para preço.\n...");
-                sc.nextLine();
-            } catch (IllegalArgumentException e) {
-                System.out.println("ERRO: O preço deve estar entre 0 e 1.000.000.000.\n...");
-            }
-        }
+        // Entrada de dados
+        Double preco = ConsoleUI.lerDouble(sc, "Informe o preço da mercadoria R$: ",
+                "ERRO: O preço deve estar entre %.2f e %.2f.\n...%n", 0, 1000000000);
 
-        Double peso;
-        while (true) {
-            try {
-                System.out.print("Informe o peso da mercadoria (KG): ");
-                peso = sc.nextDouble();
-                if(peso < 0 || peso > 100000) {
-                    throw new IllegalArgumentException();
-                }
-                sc.nextLine();
-                break;
-            } catch (InputMismatchException e) {
-                System.out.println("ERRO: Formato inválido para peso.\n...");
-                sc.nextLine();
-            } catch (IllegalArgumentException e) {
-                System.out.println("ERRO: O peso deve estar entre 0.01 Kg e 100.000 Kg.\n...");
-            }
-        }
+        Double peso = ConsoleUI.lerDouble(sc, "Informe o peso da mercadoria (KG): ",
+                "ERRO: O peso deve estar entre 0.01 Kg e 100.000 Kg.\n...", 0, 100000);
 
         System.out.print("Informe o endereço de entrega (Rua, Número, Cep): ");
         String endereco = sc.nextLine();
 
-        CargaTipo cargaTipo;
-        while (true) {
-            try {
-                System.out.print("Informe o tipo da mercadoria (inflamavel, fragil ou comum): ");
-                cargaTipo = CargaTipo.valueOf(sc.next().toUpperCase());
-                //if (cargaTipo)
-                break;
-            } catch (IllegalArgumentException e) {
-                System.out.println("ERRO: Tipo de mercadoria não existe.\n...");
-            }
-        }
+        CargaTipo cargaTipo = ConsoleUI.lerEnum(sc, CargaTipo.class,
+                "Informe o tipo da mercadoria (Inflamavel, Fragil ou Comum): ",
+                "ERRO: Tipo de mercadoria não existe.\n...");
 
-        List<ResultadoCalculo> resultCalc = new ArrayList<>(); // Criando lista para passar de arg.
+        System.out.println("---------------------------------------");
+        System.out.println("Informe as dimensões da mercadoria: ");
+
+        Double comp = ConsoleUI.lerDouble(sc, "Comprimento: ",
+                "ERRO: Medida não pode ser menor que 0 ou maior que 5 metros.\n...", 0.01, 8),
+
+                larg = ConsoleUI.lerDouble(sc, "Largura: ",
+                        "ERRO: Medida não pode ser menor que 0 ou maior que 5 metros.\n...", 0.01, 8),
+
+                alt = ConsoleUI.lerDouble(sc, "Altura : ",
+                        "ERRO: Medida não pode ser menor que 0 ou maior que 5 metros.\n...", 0.01, 8);
+
+        Rota rota = ConsoleUI.lerEnum(sc, Rota.class, "Informe a rota (SC_SP|SC_RS|SC_AM): ",
+                "ERRO: Essa rota não existe.\n...");
+        // Fim da entrada de dados.
+
+        List<ResultadoCalculo> resultCalc = new ArrayList<>();
+        List<TransporteTipo> transporteTipos = Arrays.asList(TransporteTipo.AEREO, TransporteTipo.TERRESTRE, TransporteTipo.MARITIMO);
+
+        PVService PV = new PVService();
+        FPService FP = new FPService();
+        AdvaloremService advalorem = new AdvaloremService();
+
+        new TaxaFreteService().calcularPrecoFrete(preco, peso, endereco, cargaTipo, comp, larg, alt, FP, advalorem, PV, transporteTipos, resultCalc, rota);
+
+         // Criando lista para passar de arg.
         ReciboService reciboService = new ReciboService();
-
-        // Lista de interfaces e tudo o que estende ela.
-        List<? extends ITaxaTransporte> listaTaxaTransporte = Arrays.asList(new TAereo(), new TMaritimo(), new TTerrestre());
-
-        // Chamando o serviço TaxaFrete para calcular tudo e colocar dentro da lista criada acima.
-        new TaxaFreteService().calcularPrecoFrete(preco, peso, cargaTipo, new BrazilImpostoService(),
-                endereco, resultCalc, listaTaxaTransporte);
         reciboService.mostrarOpcoes(resultCalc); // Chamando o recibo service para printar as opções de compra.
 
         int escolha;

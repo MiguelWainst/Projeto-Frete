@@ -2,40 +2,24 @@ package model.servicies;
 
 import model.entities.*;
 import model.entities.enums.CargaTipo;
-import model.interfaces.IImposto;
-import model.interfaces.ITaxaTransporte;
+import model.entities.enums.Rota;
+import model.entities.enums.TransporteTipo;
 
 import java.util.List;
 
 public class TaxaFreteService {
 
-    public void calcularPrecoFrete(Double preco, Double peso, CargaTipo cargaTipo, IImposto imposto, String endereco,
-                                   List<ResultadoCalculo> resultado, List<? extends ITaxaTransporte> list) {
+    public void calcularPrecoFrete(Double preco, Double peso, String endereco, CargaTipo cargaTipo, Double comp, Double larg, Double alt,
+                                   FPService FP, AdvaloremService adv, PVService PV,
+                                   List<TransporteTipo> transporteTipos, List<ResultadoCalculo> resultadoCalculo, Rota rota) {
 
-        for (ITaxaTransporte taxaTransporte:list) {
-
-            /* Adiciona a taxa de frete conforme a regra de negócio
-            da classe que implementa a interface ITaxaTransporte. */
-            Double taxa = taxaTransporte.TaxaFrete(peso);
-            Double precoComTaxa = taxa + preco;
-
-            // Laço que adiciona imposto e adicional de tipo de carga ao preço final.
-            Double precoTotal = 0.0; // Guarda o preço final a ser pago.
-            Double impostoPreco = imposto.regraImposto(preco); // Guarda apenas o valor do imposto.
-
-            /* Lógica atualizada */
-            /* Agora a lógica de acionar o valor adicional de carga
-            está diretamente implementada no próprio enum. */
-            Double adicionalCarga = cargaTipo.getAdicional();// Guarda o valor de adicional de carga. // O valor vem do enum.
-
-            // Soma o preço com taxa, imposto e valor adicional de tipo de carga ao preço total.
-            precoTotal += precoComTaxa + impostoPreco + adicionalCarga;
-
-            // Adiciona à lista "resultado" uma nova instância de ResultadoCalculo.
-            /* Esse ".add" é responsável por passar um objeto do tipo ResultadoCalculo
-            para a lista ResultadoCalculo. */
-            resultado.add(new ResultadoCalculo(taxaTransporte.toString(), preco, precoTotal, taxa,
-                    impostoPreco, cargaTipo.toString(), "1 Dia", endereco, adicionalCarga));
+        for (TransporteTipo transporteTipo : transporteTipos) {
+            Double pesoVolumetrico = Math.max(peso, PV.pVCalculo(comp,larg, alt, transporteTipo));
+            Double fretePeso = FP.fPCalculo(pesoVolumetrico, rota, transporteTipo);
+            Double advalorem = adv.calcAdvalorem(preco, cargaTipo);
+            Double precoTotal = fretePeso + advalorem;
+            resultadoCalculo.add(new ResultadoCalculo(transporteTipo.getTransporteNome(), preco, fretePeso, precoTotal, cargaTipo.name(), advalorem, endereco));
         }
+
     }
 }

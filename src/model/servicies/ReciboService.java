@@ -19,7 +19,7 @@ public class ReciboService {
             System.out.println("Transporte [" + i + "]: "
                     + x.getTransporte()
                     + " | Preço: "
-                    + x.getPrecoTotal());
+                    + String.format("%.2f", x.getPrecoTotal()));
             i++;
         }
     }
@@ -30,13 +30,11 @@ public class ReciboService {
 
         sb.append("   ============== RECIBO ==============\n");
         sb.append(String.format("Preço da mercadoria R$               %.2f%n", x.getPreco()));
-        sb.append(String.format("     + Imposto R$                    %.2f%n", x.getImposto()));
         sb.append("Tipo do transporte:                  ").append(x.getTransporte()).append("\n");
-        sb.append(String.format("     + Taxa de frete R$              %.2f%n", x.getTaxa()));
+        sb.append(String.format("Taxa de rete R$                      %.2f%n", x.getTaxaFrete()));
         sb.append("     + Tipo da carga:                ").append(x.getTipoDeCarga()).append("\n");
         sb.append(String.format("           + Adicional de carga R$   %.2f%n", x.getAdicionalCarga()));
         sb.append("Endereço de entrega:                 ").append(x.getEndereco()).append("\n");
-        sb.append("Duração:                             ").append(x.getDuracao()).append("\n");
         sb.append("---------------------------------------\n");
         sb.append(String.format("PREÇO TOTAL A PAGAR: R$              %.2f%n", x.getPrecoTotal()));
 
