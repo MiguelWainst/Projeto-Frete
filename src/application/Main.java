@@ -1,5 +1,7 @@
 package application;
 
+import model.Carga;
+import model.entities.Dimensao;
 import model.entities.ResultadoCalculo;
 import model.entities.enums.CargaTipo;
 import model.entities.enums.Rota;
@@ -43,6 +45,9 @@ public class Main {
         Rota rota = ConsoleUI.lerEnum(sc, Rota.class, "Informe a rota (SC_SP|SC_RS|SC_AM): ",
                 "ERRO: Essa rota não existe.\n...");
         /* Fim da entrada de dados =============================================================================*/
+
+        // Classe carga guardando todas as informações do que tange a carga.
+        Carga carga = new Carga(preco, peso, endereco, cargaTipo, new Dimensao(comp, larg, alt), rota);
 
         List<ResultadoCalculo> resultCalc = new ArrayList<>(); // Cria uma lista para armazenar as informações.
 
