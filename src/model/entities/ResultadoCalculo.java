@@ -1,107 +1,85 @@
 package model.entities;
 
-import java.time.Duration;
-
+/**
+ * Representa o espelho do cálculo final de um frete.
+ * <p>
+ * Esta classe funciona como um contêiner de dados que armazena
+ * detalhadamente os valores de frete, seguro e taxas, facilitando a
+ * exibição e a geração do recibo para o cliente.
+ *
+ * @author Miguel Wainstein
+ * @version 1.0
+ * @since 28/05/2026
+ */
 public class ResultadoCalculo {
-
-    /*
-    Esta classe é responsável por guardar um objeto carregando
-    as informações necessárias para um print do recibo.
-     */
-
+    /** Nome do modal de transporte (ex: Aéreo, Rodoviário). */
     private String transporte;
+    /** Valor original da mercadoria informada pelo cliente. */
     private Double preco;
+    /** Valor calculado apenas para o deslocamento (Frete Peso). */
+    private Double taxaFrete;
+    /** Valor final somando frete, adicionais e seguros. */
     private Double precoTotal;
-    private Double taxa;
-    private Double imposto;
+    /** Nome descritivo da categoria da carga. */
     private String tipoDeCarga;
+    /** Valor do seguro baseado no risco da carga (Advalorem). */
     private Double adicionalCarga;
-    private String duracao;
+    /** Local de destino da entrega. */
     private String endereco;
 
-    public ResultadoCalculo(String transporte, Double preco, Double precoTotal, Double taxa,
-                            Double imposto, String tipoDeCarga, String duracao, String endereco,
-                            Double adicionalCarga) {
+
+    public ResultadoCalculo(String transporte, Double preco, Double taxaFrete, Double precoTotal,
+                            String tipoDeCarga, Double adicionalCarga, String endereco) {
         this.transporte = transporte;
         this.preco = preco;
+        this.taxaFrete = taxaFrete;
         this.precoTotal = precoTotal;
-        this.taxa = taxa;
-        this.imposto = imposto;
         this.tipoDeCarga = tipoDeCarga;
         this.adicionalCarga = adicionalCarga;
-        this.duracao = duracao;
         this.endereco = endereco;
     }
 
-    public Double getPrecoTotal() {
-        return precoTotal;
+    // Getters e Setters.
+    public Double getTaxaFrete() {
+        return taxaFrete;
     }
-
-    public void setPrecoTotal(Double precoTotal) {
-        this.precoTotal = precoTotal;
+    public void setTaxaFrete(Double taxaFrete) {
+        this.taxaFrete = taxaFrete;
     }
-
-    public String getTransporte() {
-        return transporte;
-    }
-
-    public void setTransporte(String transporte) {
-        this.transporte = transporte;
-    }
-
-    public Double getPreco() {
-        return preco;
-    }
-
-    public void setPreco(Double preco) {
-        this.preco = preco;
-    }
-
-    public Double getTaxa() {
-        return taxa;
-    }
-
-    public void setTaxa(Double taxa) {
-        this.taxa = taxa;
-    }
-
-    public Double getImposto() {
-        return imposto;
-    }
-
-    public void setImposto(Double imposto) {
-        this.imposto = imposto;
-    }
-
-    public String getTipoDeCarga() {
-        return tipoDeCarga;
-    }
-
-    public void setTipoDeCarga(String tipoDeCarga) {
-        this.tipoDeCarga = tipoDeCarga;
-    }
-
-    public String getDuracao() {
-        return duracao;
-    }
-
-    public void setDuracao(String duracao) {
-        this.duracao = duracao;
-    }
-
     public String getEndereco() {
         return endereco;
     }
-
     public void setEndereco(String endereco) {
         this.endereco = endereco;
     }
-
     public Double getAdicionalCarga() {
         return adicionalCarga;
     }
-
     public void setAdicionalCarga(Double adicionalCarga) {
         this.adicionalCarga = adicionalCarga;
+    }
+    public String getTipoDeCarga() {
+        return tipoDeCarga;
+    }
+    public void setTipoDeCarga(String tipoDeCarga) {
+        this.tipoDeCarga = tipoDeCarga;
+    }
+    public Double getPrecoTotal() {
+        return precoTotal;
+    }
+    public void setPrecoTotal(Double precoTotal) {
+        this.precoTotal = precoTotal;
+    }
+    public Double getPreco() {
+        return preco;
+    }
+    public void setPreco(Double preco) {
+        this.preco = preco;
+    }
+    public String getTransporte() {
+        return transporte;
+    }
+    public void setTransporte(String transporte) {
+        this.transporte = transporte;
     }
 }

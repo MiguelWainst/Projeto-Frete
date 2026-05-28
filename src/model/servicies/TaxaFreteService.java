@@ -1,41 +1,72 @@
 package model.servicies;
 
+import model.entities.Carga;
 import model.entities.*;
-import model.entities.enums.CargaTipo;
-import model.interfaces.IImposto;
-import model.interfaces.ITaxaTransporte;
+import model.entities.enums.TransporteTipo;
 
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Esta classe é o organizador do sistema de fretes.
+ * Ela coordena a execução dos serviços de Peso Volumétrico, Frete Peso
+ * e Advalorem para consolidar o custo logístico de cada modal de transporte.
+ *
+ * @author Miguel Wainstein
+ * @version 1.2
+ * @since 28/05/2026
+ */
 public class TaxaFreteService {
+    private final FPService fretePesoService;
+    private final PVService pesoVolumetricoService;
+    private final AdvaloremService advaloremService;
 
-    public void calcularPrecoFrete(Double preco, Double peso, CargaTipo cargaTipo, IImposto imposto, String endereco,
-                                   List<ResultadoCalculo> resultado, List<? extends ITaxaTransporte> list) {
+    /**
+     * O construtor recebe as ferramentas (serviços) necessárias.
+     * Isso garante que a classe sempre tenha o que precisa para calcular.
+     * @param fretePesoService Serviço para o cálculo do frete baseado em peso e rota.
+     * @param pesoVolumetricoService Serviço que define se usamos o peso real ou o tamanho da caixa (cubagem).
+     * @param advaloremService Serviço que calcula o valor do seguro da mercadoria.
+     */
+    public TaxaFreteService(FPService fretePesoService, PVService pesoVolumetricoService, AdvaloremService advaloremService) {
+        this.fretePesoService = fretePesoService;
+        this.pesoVolumetricoService = pesoVolumetricoService;
+        this.advaloremService = advaloremService;
+    }
 
-        for (ITaxaTransporte taxaTransporte:list) {
+    /**
+     * Realiza o cálculo de todos os tipos de transporte e devolve uma lista com os resultados.
+     * @param cargaInfo Objeto com os dados da mercadoria (peso, preço, dimensões, etc.).
+     * @param transporteTipos Lista de transportes que queremos calcular (Aéreo, Terrestre, etc.).
+     * @return Uma lista de objetos {@link ResultadoCalculo} contendo os orçamentos prontos.
+     */
+    public List<ResultadoCalculo> calcularPrecoFrete(Carga cargaInfo, List<TransporteTipo> transporteTipos) {
+        // Cria uma lista interna para guardar os cálculos que vamos fazer agora.
+        List<ResultadoCalculo> resultadoCalculo = new ArrayList<>();
 
-            /* Adiciona a taxa de frete conforme a regra de negócio
-            da classe que implementa a interface ITaxaTransporte. */
-            Double taxa = taxaTransporte.TaxaFrete(peso);
-            Double precoComTaxa = taxa + preco;
+        // Para cada tipo de transporte na lista, fazemos a sequência de cálculos.
+        for (TransporteTipo transporteTipo : transporteTipos) {
+            // Calcula o peso que será efetivamente cobrado (Peso Volumétrico).
+            Double pesoTaxavel = pesoVolumetricoService.calcularPesoTaxavel(cargaInfo.getPeso(), cargaInfo.getDimensao(), transporteTipo);
 
-            // Laço que adiciona imposto e adicional de tipo de carga ao preço final.
-            Double precoTotal = 0.0; // Guarda o preço final a ser pago.
-            Double impostoPreco = imposto.regraImposto(preco); // Guarda apenas o valor do imposto.
+            // Calcula o frete peso com base no peso taxável.
+            Double fretePeso = fretePesoService.calcularFretePeso(pesoTaxavel, cargaInfo.getRota(), transporteTipo);
 
-            /* Lógica atualizada */
-            /* Agora a lógica de acionar o valor adicional de carga
-            está diretamente implementada no próprio enum. */
-            Double adicionalCarga = cargaTipo.getAdicional();// Guarda o valor de adicional de carga. // O valor vem do enum.
+            // Calcula o seguro (Advalorem) sobre o valor da mercadoria.
+            Double advalorem = advaloremService.calcAdvalorem(cargaInfo.getPreco(), cargaInfo.getCargaTipo(), transporteTipo);
 
-            // Soma o preço com taxa, imposto e valor adicional de tipo de carga ao preço total.
-            precoTotal += precoComTaxa + impostoPreco + adicionalCarga;
+            Double precoTotal = fretePeso + advalorem;
 
-            // Adiciona à lista "resultado" uma nova instância de ResultadoCalculo.
-            /* Esse ".add" é responsável por passar um objeto do tipo ResultadoCalculo
-            para a lista ResultadoCalculo. */
-            resultado.add(new ResultadoCalculo(taxaTransporte.toString(), preco, precoTotal, taxa,
-                    impostoPreco, cargaTipo.toString(), "1 Dia", endereco, adicionalCarga));
+            // Consolida os dados no objeto de transferência de resultado.
+            resultadoCalculo.add(new ResultadoCalculo(transporteTipo.getTransporteNome(),
+                    cargaInfo.getPreco(),
+                    fretePeso,
+                    precoTotal,
+                    cargaInfo.getCargaTipo().name(),
+                    advalorem,
+                    cargaInfo.getEndereco()));
         }
+        // Devolvemos a lista completa para quem chamou o metodh.
+        return resultadoCalculo;
     }
 }
