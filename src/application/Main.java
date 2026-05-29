@@ -63,10 +63,10 @@ public class Main {
 
         // Ordenando a lista por ordem de preço total.
         resultCalc.sort(Comparator.comparing(ResultadoCalculo::getPrecoTotal));
+        // Removendo da lista caso o preço seja negativo ou não tenha endereço.
+        resultCalc.removeIf(p -> p.getPrecoTotal() < 0 || p.getEndereco().isEmpty());
 
-        // Criando lista para passar de arg.
         ReciboService reciboService = new ReciboService();
-
         // Chamando o recibo service para printar as opções de compra.
         reciboService.mostrarOpcoes(resultCalc);
 
