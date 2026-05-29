@@ -6,6 +6,7 @@ import model.entities.ResultadoCalculo;
 import model.entities.enums.CargaTipo;
 import model.entities.enums.Rota;
 import model.entities.enums.TransporteTipo;
+import model.interfaces.ITaxaFreteService;
 import model.servicies.*;
 import util.ConsoleUI;
 
@@ -54,18 +55,27 @@ public class Main {
         // Criando uma lista de Enum que contenha os tipos de transporte.
         List<TransporteTipo> transporteTipos = Arrays.asList(TransporteTipo.AEREO, TransporteTipo.TERRESTRE, TransporteTipo.MARITIMO);
 
-        // Passando para o TaxaFrete as informações necessárias para gerar o preço total do frete.
-        List<ResultadoCalculo> resultCalc = new TaxaFreteService(new FPService(), new PVService(), new AdvaloremService()).calcularPrecoFrete(carga, transporteTipos);
+        // Usando a interface para instanciar o TaxaFrete que eu quiser (nesse caso só tem o do Brasil).
+        ITaxaFreteService taxaFreteService = new TaxaFreteServiceBrazil(new FPService(), new PVService(), new AdvaloremService());
+
+        // Função retorna uma lista nova. A lista está sendo passada para o "resultCalc".
+        List<ResultadoCalculo> resultCalc = taxaFreteService.calcularPrecoFrete(carga, transporteTipos);
+
+        // Ordenando a lista por ordem de preço total.
+        resultCalc.sort(Comparator.comparing(ResultadoCalculo::getPrecoTotal));
 
         // Criando lista para passar de arg.
         ReciboService reciboService = new ReciboService();
-        reciboService.mostrarOpcoes(resultCalc); // Chamando o recibo service para printar as opções de compra.
+
+        // Chamando o recibo service para printar as opções de compra.
+        reciboService.mostrarOpcoes(resultCalc);
 
         int escolha = (int) ConsoleUI.lerLista(sc, resultCalc, "\nQual sua escolha: ",
                 "ERRO: Escolha um número dentro do disponível.\n...");
 
         // Baseado na escolha, o ReciboService manda uma String com o cupom.
         String reciboFinal = reciboService.gerarRecibo(resultCalc, escolha);
+
         System.out.println(reciboFinal); // Imprimie o recibo/cupom fiscal final.
 
         /* Lógica para imprimir o cupom fiscal —criar um arquivo .txt na pasta

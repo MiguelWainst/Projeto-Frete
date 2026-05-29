@@ -3,12 +3,14 @@ package model.servicies;
 import model.entities.Carga;
 import model.entities.*;
 import model.entities.enums.TransporteTipo;
+import model.interfaces.ITaxaFreteService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Esta classe é o organizador do sistema de fretes.
+ * Ela Implementa a interface ITaxaFreteService.
  * Ela coordena a execução dos serviços de Peso Volumétrico, Frete Peso
  * e Advalorem para consolidar o custo logístico de cada modal de transporte.
  *
@@ -16,7 +18,7 @@ import java.util.List;
  * @version 1.2
  * @since 28/05/2026
  */
-public class TaxaFreteService {
+public class TaxaFreteServiceBrazil implements ITaxaFreteService {
     private final FPService fretePesoService;
     private final PVService pesoVolumetricoService;
     private final AdvaloremService advaloremService;
@@ -28,7 +30,7 @@ public class TaxaFreteService {
      * @param pesoVolumetricoService Serviço que define se usamos o peso real ou o tamanho da caixa (cubagem).
      * @param advaloremService Serviço que calcula o valor do seguro da mercadoria.
      */
-    public TaxaFreteService(FPService fretePesoService, PVService pesoVolumetricoService, AdvaloremService advaloremService) {
+    public TaxaFreteServiceBrazil(FPService fretePesoService, PVService pesoVolumetricoService, AdvaloremService advaloremService) {
         this.fretePesoService = fretePesoService;
         this.pesoVolumetricoService = pesoVolumetricoService;
         this.advaloremService = advaloremService;
